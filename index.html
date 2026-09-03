@@ -7,14 +7,17 @@
 
     <style>
         body {
-            background-color: #fff0f5;
+            background: linear-gradient(135deg, #fff0f5, #ffe4ec);
             text-align: center;
-            padding-top: 50px;
+            padding: 50px 15px;
         }
 
         h1 {
             font-size: 36px;
             margin-bottom: 20px;
+            color: #ff5c8a;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(255, 92, 138, 0.2);
         }
 
         button {
@@ -24,6 +27,12 @@
             border: none;
             border-radius: 20px;
             cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0 , 0.08);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
         }
 
         #romantic {
@@ -76,11 +85,19 @@
             display: none;
             animation: showResult 0.5s;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid #ffe0ea;
         }
 
         #result h2 {
             color: #ff5c8a;
             margin: 10px 00;
+            font-size: 28px;
+        }
+
+        #result h3 {
+            color: #555;
+            font-size: 18px;
+            margin-bottom: 15px;
         }
 
         #result p {
@@ -88,21 +105,24 @@
             font-weight: normal;
             color: #666;
             margin-top: 15px;
+            line-height: 1.6;
         }
 
         #result .mood {
             display: inline-block;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
             color: #ff5c8a;
             background-color: #fff0f5;
-            padding: 6px 12px;
+            padding: 8px 14px;
             border-radius: 20px;
             margin: 0;
+            box-shadow: 0 3px 8px rgba(255, 92, 138, 0.15);
         }
 
         button.selected {
             border: 3px solid #ff5c8a;
+            transform: scale(1.05);
         }
 
         @keyframes showResult {
@@ -139,202 +159,302 @@
                 width: 90%;
                 padding: 20px 10px;
             }
+
         }
+        .container {
+            background-color: white;
+            width: 80%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .container > h2 {
+            font-size: 20px;
+            color: #777;
+            font-weight: normal;
+            margin-bottom: 25px;
+        }
+
+        #result.romantic .mood {
+            color: #ff5c8a;
+            background-color: #fff0f5;
+        }
+
+        #result.relaxed .mood {
+            color: #4aa3df;
+            background-color: #e8f6ff;
+        }
+
+        #result.unique .mood {
+            color: #8b5cf6;
+            background-color: #f0eaff;
+        }
+
+        #result.exciting .mood {
+            color: #f07800;
+            background-color: #fff0dc;
+        }
+
+        #result.healing .mood {
+            color: #3b9b5f;
+            background-color: #e9f8ed;
+        }
+
+        #result.budget .mood {
+            color: #c49a00;
+            background-color: #fff8d6;
+        }
+
+        #result.romantic h2 {
+            color: #ff5c8a;
+        }
+        
+        #result.relaxed h2 {
+            color: #4aa3df;
+        }
+        
+        #result.unique h2 {
+            color: #8b5cf6;
+        }
+        
+        #result.exciting h2 {
+            color: #f07800;
+        }
+        
+        #result.healing h2 {
+            color: #3b9b5f;
+        }
+        
+        #result.budget h2 {
+            color: #c49a00;
+        }
+        
     </style>
 </head>
 <body>
-    <h1>💕 오늘의 데이트 추천</h1>
-    <h2>어떤 분위기의 데이트를 원하세요?</h2>
-    <button id="romantic">🌷 로맨틱</button>
-    <button id="relaxed">☕ 여유로운</button>
-    <button id="unique">🎨 색다른</button>
-    <button id="exciting">🎢 신나는</button>
-    <button id="healing">🌿 힐링</button>
-    <button id="budget">💰 가성비</button>
 
-    <button id="recommend">💕 데이트 추천받기</button>
-    <p id="result"></p>
+    <div class="container">
 
-    <script>
-        let selectedMood = "";
+        <h1>💕 오늘의 데이트 추천</h1>
+        <h2>어떤 분위기의 데이트를 원하세요?</h2>
+        <button id="romantic">🌷 로맨틱</button>
+        <button id="relaxed">☕ 여유로운</button>
+        <button id="unique">🎨 색다른</button>
+        <button id="exciting">🎢 신나는</button>
+        <button id="healing">🌿 힐링</button>
+        <button id="budget">💰 가성비</button>
+        
+        <button id="recommend">💕 데이트 추천받기</button>
+        <p id="result"></p>
+        
+        <script>
+            let selectedMood = "";
+            let previousIndex = -1;
 
-        let dateList = {
-            romantic: [
-                {
-                    name: "야경 드라이브",
-                    description: "예쁜 야경을 보면서 드라이브해보세요 🚗✨"
-                },
-                {
-                    name: "분위기 좋은 레스토랑",
-                    description: "맛있는 음식과 함께 로맨틱한 시간을 보내보세요🍝💕"
-                },
-                {
-                    name: "한강 피크닉",
-                    description: "맛있는 간식을 준비해서 한강에서 여유롭게 즐겨보세요 🧺🌙"
-                },
-            ],
-            relaxed: [
-                {
-                    name: "감성 카페",
-                    description: "예쁜 카페에서 맛있는 음료를 마시며 이야기해보세요 ☕💕"
-                },
-                {
-                    name: "공원 산책",
-                    description: "천천히 걸으면서 서로의 이야기를 나눠보세요 🌳😊"
-                },
-                {
-                    name: "서점 데이트",
-                    description: "서점에서 서로 어울리는 책을 골라보세요 📚💕"
-                }
-            ],
-            unique: [
-                {
-                    name: "전시회",
-                    description: "멋진 작품을 감상하고 예쁜 사진도 남겨보세요 🎨📸"
-                },
-                {
-                    name: "도자기 만들기",
-                    description: "서로만의 특별한 작품을 만들어 추억을 남겨보세요 🏺💕"
-                },
-                {
-                    name: "방탈출",
-                    description: "둘이 힘을 합쳐 미션을 해결해보세요 🔐😆"
-                }
-            ],
-            exciting: [
-                {
-                    name: "놀이공원",
-                    description: "신나는 놀이기구를 타면서 하루 종일 즐겨보세요 🎢💕"
-                },
-                {
-                    name: "볼링",
-                    description: "누가 더 높은 점수를 얻는지 재미있게 내기해보세요 🎳😆"
-                },
-                {
-                    name: "실내 스포츠",
-                    description: "같이 땀 흘리면서 신나게 움직여보세요 🏃‍♀️🏃‍♂️"
-                }
-            ],
-            healing: [
-                {
-                    name: "스파",
-                    description: "따뜻한 물에 몸을 담그고 편안하게 쉬어보세요 🛁🌿"
-                },
-                {
-                    name: "숲길 산책",
-                    description: "맑은 공기를 마시며 천천히 산책해보세요 🌳🍃"
-                },
-                {
-                    name: "한적한 카페",
-                    description: "조용한 카페에서 여유롭게 서로의 시간을 보내보세요 ☕🌿"
-                }
-            ],
-            budget: [
-                {
-                    name: "집에서 영화 보기",
-                    description: "좋아하는 영화를 골라 편안하게 같이 감상해보세요 🎬💕"
-                },
-                {
-                    name: "편의점 간식 먹으며 산책",
-                    description: "먹고 싶은 간식을 골라서 산책하며 소소한 데이트를 즐겨보세요 🍪🚶"
-                },
-                {
-                    name: "무료 전시 관람",
-                    description: "무료 전시를 찾아 구경하며 알뜰하게 문화생활을 즐겨보세요 🎨✨"
-                }
-            ]
-        }
-
-        let moodList = {
-            romantic: "🌷 로맨틱",
-            relaxed: "☕ 여유로운",
-            unique: "🎨 색다른",
-            exciting: "🎢 신나는",
-            healing: "🌿 힐링",
-            budget: "💰 가성비"
-        }
-
-        let romantic = document.getElementById("romantic");
-        let relaxed = document.getElementById("relaxed");
-        let unique = document.getElementById("unique");
-        let exciting = document.getElementById("exciting");
-        let healing = document.getElementById("healing");
-        let budget = document.getElementById("budget");
-
-        let recommend = document.getElementById("recommend");
-        let result = document.getElementById("result");
-        function resetSelected() {
-            document.querySelectorAll("button").forEach(function (button) {
-                button.classList.remove("selected");
-            });
-        }
-
-
-        recommend.addEventListener("click", function() {
-            if (selectedMood === "") {
-                alert("먼저 분위기를 선택해주세요! 💕")
-                return;
+            let dateList = {
+                romantic: [
+                    {
+                        name: "야경 드라이브",
+                        description: "예쁜 야경을 보면서 드라이브해보세요 🚗✨"
+                    },
+                    {
+                        name: "분위기 좋은 레스토랑",
+                        description: "맛있는 음식과 함께 로맨틱한 시간을 보내보세요🍝💕"
+                    },
+                    {
+                        name: "한강 피크닉",
+                        description: "맛있는 간식을 준비해서 한강에서 여유롭게 즐겨보세요 🧺🌙"
+                    },
+                ],
+                relaxed: [
+                    {
+                        name: "감성 카페",
+                        description: "예쁜 카페에서 맛있는 음료를 마시며 이야기해보세요 ☕💕"
+                    },
+                    {
+                        name: "공원 산책",
+                        description: "천천히 걸으면서 서로의 이야기를 나눠보세요 🌳😊"
+                    },
+                    {
+                        name: "서점 데이트",
+                        description: "서점에서 서로 어울리는 책을 골라보세요 📚💕"
+                    }
+                ],
+                unique: [
+                    {
+                        name: "전시회",
+                        description: "멋진 작품을 감상하고 예쁜 사진도 남겨보세요 🎨📸"
+                    },
+                    {
+                        name: "도자기 만들기",
+                        description: "서로만의 특별한 작품을 만들어 추억을 남겨보세요 🏺💕"
+                    },
+                    {
+                        name: "방탈출",
+                        description: "둘이 힘을 합쳐 미션을 해결해보세요 🔐😆"
+                    }
+                ],
+                exciting: [
+                    {
+                        name: "놀이공원",
+                        description: "신나는 놀이기구를 타면서 하루 종일 즐겨보세요 🎢💕"
+                    },
+                    {
+                        name: "볼링",
+                        description: "누가 더 높은 점수를 얻는지 재미있게 내기해보세요 🎳😆"
+                    },
+                    {
+                        name: "실내 스포츠",
+                        description: "같이 땀 흘리면서 신나게 움직여보세요 🏃‍♀️🏃‍♂️"
+                    }
+                ],
+                healing: [
+                    {
+                        name: "스파",
+                        description: "따뜻한 물에 몸을 담그고 편안하게 쉬어보세요 🛁🌿"
+                    },
+                    {
+                        name: "숲길 산책",
+                        description: "맑은 공기를 마시며 천천히 산책해보세요 🌳🍃"
+                    },
+                    {
+                        name: "한적한 카페",
+                        description: "조용한 카페에서 여유롭게 서로의 시간을 보내보세요 ☕🌿"
+                    }
+                ],
+                budget: [
+                    {
+                        name: "집에서 영화 보기",
+                        description: "좋아하는 영화를 골라 편안하게 같이 감상해보세요 🎬💕"
+                    },
+                    {
+                        name: "편의점 간식 먹으며 산책",
+                        description: "먹고 싶은 간식을 골라서 산책하며 소소한 데이트를 즐겨보세요 🍪🚶"
+                    },
+                    {
+                        name: "무료 전시 관람",
+                        description: "무료 전시를 찾아 구경하며 알뜰하게 문화생활을 즐겨보세요 🎨✨"
+                    }
+                ]
             }
+
+            let moodList = {
+                romantic: "🌷 로맨틱",
+                relaxed: "☕ 여유로운",
+                unique: "🎨 색다른",
+                exciting: "🎢 신나는",
+                healing: "🌿 힐링",
+                budget: "💰 가성비"
+            }
+
+            let dateEmoji = {
+                romantic: "🌹",
+                relaxed: "☕",
+                unique: "✨",
+                exciting: "🎉",
+                healing: "🍃",
+                budget: "💛"
+            }
+
+            let romantic = document.getElementById("romantic");
+            let relaxed = document.getElementById("relaxed");
+            let unique = document.getElementById("unique");
+            let exciting = document.getElementById("exciting");
+            let healing = document.getElementById("healing");
+            let budget = document.getElementById("budget");
+
+            let recommend = document.getElementById("recommend");
+            let result = document.getElementById("result");
+            function resetSelected() {
+                document.querySelectorAll("button").forEach(function (button) {
+                    button.classList.remove("selected");
+                });
+            }
+
+
+            recommend.addEventListener("click", function() {
+                if (selectedMood === "") {
+                    alert("먼저 분위기를 선택해주세요! 💕")
+                    return;
+                }
             
-            let date = dateList[selectedMood];
+                let date = dateList[selectedMood];
 
-            let randomIndex = Math.floor(Math.random() * date.length);
+                let randomIndex;
+
+                do {
+                    randomIndex = Math.floor(Math.random() * date.length);
+                } while (randomIndex === previousIndex);
+
+                previousIndex = randomIndex;
             
-            let recommendedDate = date[randomIndex];
+                let recommendedDate = date[randomIndex];
 
-            result.style.display = "none";
-            result.offsetHeight;
+                result.className = selectedMood;
 
-            result.innerHTML = 
-                "<h3>✨ 오늘의 데이트는?</h3>" +
-                "<p class='mood'>" + moodList[selectedMood] + "</p>" +
-                "<h2>💕 "  + recommendedDate.name + "</h2>" +
-                "<p>" + recommendedDate.description + "</p>";
+                result.style.display = "none";
+                result.offsetHeight;
+
+                result.innerHTML = 
+                    "<h3>✨ 오늘의 데이트는?</h3>" +
+                    "<p class='mood'>" + moodList[selectedMood] + "</p>" +
+                    "<h2>" + dateEmoji[selectedMood] + " " + recommendedDate.name + "</h2>" +
+                    "<p>" + recommendedDate.description + "</p>";
             
-            recommend.innerHTML = "🔄 다시 추천받기";
+                recommend.innerHTML = "🔄 다시 추천받기";
             
-            result.style.animation = "none";
-            result.offsetHeight;
-            result.style.animation = "showResult 0.5s";
-            result.style.display = "block";
-        })
+                result.style.animation = "none";
+                result.offsetHeight;
+                result.style.animation = "showResult 0.5s";
+                result.style.display = "block";
+            })
 
-        romantic.addEventListener("click",function() {
-            selectedMood = "romantic";
-            resetSelected();
-            romantic.classList.add("selected");
-        });
+            romantic.addEventListener("click",function() {
+                selectedMood = "romantic";
+                previousIndex = -1;
+                resetSelected();
+                romantic.classList.add("selected");
+            });
 
-        relaxed.addEventListener("click", function() {
-            selectedMood = "relaxed";
-            resetSelected();
-            relaxed.classList.add("selected");
-        });
+            relaxed.addEventListener("click", function() {
+                selectedMood = "relaxed";
+                previousIndex = -1;                
+                resetSelected();
+                relaxed.classList.add("selected");
+            });
 
-        unique.addEventListener("click", function() {
-            selectedMood = "unique";
-            resetSelected();
-            unique.classList.add("selected");
-        });
+            unique.addEventListener("click", function() {
+                selectedMood = "unique";
+                previousIndex = -1;
+                resetSelected();
+                unique.classList.add("selected");
+            });
 
-        exciting.addEventListener("click", function() {
-            selectedMood = "exciting";
-            resetSelected();
-            exciting.classList.add("selected");
-        });
+            exciting.addEventListener("click", function() {
+                selectedMood = "exciting";
+                previousIndex = -1;
+                resetSelected();
+                exciting.classList.add("selected");
+            });
 
-        healing.addEventListener("click", function() {
-            selectedMood = "healing";
-            resetSelected();
-            healing.classList.add("selected");
-        });
+            healing.addEventListener("click", function() {
+                selectedMood = "healing";
+                previousIndex = -1;
+                resetSelected();
+                healing.classList.add("selected");
+            });
 
-        budget.addEventListener("click", function() {
-            selectedMood = "budget";
-            resetSelected();
-            budget.classList.add("selected");
-        });
+            budget.addEventListener("click", function() {
+                selectedMood = "budget";
+                previousIndex = -1;
+                resetSelected();
+                budget.classList.add("selected");
+            });
 
-    </script>
+        </script>
+    </div>
 </body>
 </html>
